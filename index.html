@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SnapFash | Class Prototype</title>
+<style>
+/* CSS: this section changes the appearance */
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#faf7f6;color:#262126}header{background:white;padding:18px 6%;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:10px;align-items:center}header strong{font-size:26px;color:#b13b75}header small{font-size:11px;color:#71666e}.container{max-width:950px;padding:28px 18px;margin:auto}.hero{text-align:center;padding:22px 0 32px}.hero h1{font-size:clamp(30px,5vw,46px);margin:0 0 12px}.hero p,.muted{color:#71666e}.tag{display:inline-block;border-radius:30px;background:#fce4ef;color:#96365d;padding:7px 13px;font-size:12px;font-weight:bold;margin-bottom:14px}.box{background:#fff;border:1px solid #f0e7eb;box-shadow:0 8px 30px #421d300c;border-radius:18px;padding:24px;margin-bottom:22px}h2{margin-top:0;font-size:21px}.upload{padding:28px;border:2px dashed #dfb3c7;border-radius:13px;text-align:center;background:#fff9fb}.upload b{display:block;margin:9px}.upload input{max-width:100%}#preview{display:none;margin:15px auto 0;width:160px;height:150px;object-fit:contain;border-radius:10px;border:1px solid #eee}.controls{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}select,button{font-size:15px;padding:12px;border-radius:9px}select{border:1px solid #d9cfd3;flex:1;min-width:160px}button{background:#b13b75;border:0;color:white;font-weight:bold;cursor:pointer}button:hover{background:#912c5d}.note{background:#fff4e6;color:#704f1b;border-radius:10px;padding:12px 15px;font-size:13px;margin-top:16px}#results{display:none}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.card{border:1px solid #f0e1e7;border-radius:12px;overflow:hidden}.emoji{background:linear-gradient(135deg,#fce2ed,#f1e9f8);height:115px;display:grid;place-items:center;font-size:58px}.info{padding:14px}.info h3{font-size:16px;margin:0 0 7px}.info p{font-size:13px;color:#71666e}.info strong{color:#ad336d}.store{background:#fff2f7;border-radius:11px;padding:15px;margin-top:17px}.store p{margin:7px 0 0;font-size:13px}.mini{font-size:13px;color:#746b70;line-height:1.6}.footer{text-align:center;font-size:12px;color:#867c80;padding:0 20px 30px}@media(max-width:620px){.cards{grid-template-columns:1fr}.box{padding:17px}}
+</style>
+</head>
+<body>
+<header><strong>✦ SnapFash</strong><small>STUDENT DEMO · NOT A REAL SHOP</small></header>
+<main class="container">
+<section class="hero"><span class="tag">FASHION PRODUCT DISCOVERY</span><h1>See it. Snap it. Find it.</h1><p>Discover similar fashion items from a photo.</p></section>
+<section class="box"><h2>Try SnapFash</h2><p class="muted">Choose a photo and a category to see example products.</p>
+<div class="upload"><div style="font-size:34px">📷</div><b>Upload a product photo</b><input id="photo" type="file" accept="image/*"><img id="preview" alt="Your uploaded photo"></div>
+<div class="controls"><label for="category">Category:</label><select id="category"><option value="bags">Bags</option><option value="shoes">Shoes</option><option value="makeup">Makeup</option></select><button id="search">Find Similar Items</button></div>
+<div class="note">Classroom prototype: the selected category determines the demo results. The photo is previewed locally; no real AI analysis, live shopping search or cloud database is used.</div></section>
+<section class="box" id="results"><h2>Similar items</h2><p class="muted">Example product data (not live offers)</p><div id="cards" class="cards"></div><div class="store"><b>📍 Example store</b><p id="store"></p></div></section>
+<section class="box"><h2>How Cloud & Data fit in</h2><p class="mini"><b>Data:</b> The sample products below are stored as a simple JavaScript list inside this file (name, shade and price).</p><p class="mini"><b>Cloud:</b> The finished web page can be published online using GitHub Pages. That is cloud hosting, not a cloud database.</p><p class="mini"><b>Future idea:</b> A real version could use cloud storage, a product database and an AI search service.</p></section>
+</main><footer class="footer">SnapFash · Educational prototype · Fictional prices and stores</footer>
+<script>
+// DATA: sample products. You can change names and prices here.
+const products = {
+  bags: {store:'Fashion Shop, Munich (fictional example)', items:[['👜','Mini Shoulder Bag','Pink','€39'],['🎒','Everyday Backpack','Black','€49'],['👛','Crossbody Bag','Beige','€45']]},
+  shoes: {store:'Shoe Shop, Munich (fictional example)', items:[['👟','Casual Sneakers','White','€59'],['👟','Classic Trainers','Cream','€69'],['🥾','Ankle Boots','Brown','€79']]},
+  makeup: {store:'Beauty Shop, Munich (fictional example)', items:[['💄','Rose Lipstick','Dusty Rose','€15'],['🧴','Lip Gloss','Soft Pink','€12'],['💋','Matte Lip Color','Berry','€18']]}
+};
+// PHOTO: display an uploaded picture (without sending it anywhere).
+const photoInput = document.getElementById('photo');
+let photoURL = null;
+photoInput.addEventListener('change', function() {
+  if (photoURL) URL.revokeObjectURL(photoURL);
+  const file = photoInput.files[0];
+  const preview = document.getElementById('preview');
+  if (!file) { preview.style.display = 'none'; return; }
+  photoURL = URL.createObjectURL(file);
+  preview.src = photoURL;
+  preview.style.display = 'block';
+});
+// BUTTON: show the example data for the chosen category.
+document.getElementById('search').addEventListener('click', function() {
+  const category = document.getElementById('category').value;
+  const choice = products[category];
+  const cards = document.getElementById('cards');
+  cards.innerHTML = '';
+  choice.items.forEach(function(item) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    const art = document.createElement('div'); art.className = 'emoji'; art.textContent = item[0];
+    const info = document.createElement('div'); info.className = 'info';
+    const name = document.createElement('h3'); name.textContent = item[1];
+    const shade = document.createElement('p'); shade.textContent = 'Color: ' + item[2];
+    const price = document.createElement('strong'); price.textContent = item[3];
+    info.append(name,shade,price); card.append(art,info); cards.append(card);
+  });
+  document.getElementById('store').textContent = choice.store;
+  document.getElementById('results').style.display = 'block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+});
+</script>
+</body>
+</html>
